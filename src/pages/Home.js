@@ -269,8 +269,11 @@ function Home() {
             >
 
                 <Modal.Body>
-                    <img src='http://localhost:5000/images/image.jpg' style={{ width: '100px', height: '100px' }} />
-
+                    <img
+                        src="http://localhost:5000/images/image.jpg"
+                        alt="Description of the image"
+                        style={{ width: '100px', height: '100px' }}
+                    />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleImageClose}>
