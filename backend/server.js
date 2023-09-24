@@ -21,8 +21,8 @@ app.post('/base64_to_image', (req, res) => {
     if (!image) {
         return res.status(400).json({ error: 'Image data is missing' });
     }
-    const now = new Date();
-    const dateFormatted = now.toISOString().replace(/[:.]/g, '-');
+    // const now = new Date();
+    // const dateFormatted = now.toISOString().replace(/[:.]/g, '-');
     const filename = `image`;
     const directoryPath = './images';
     const filePath = path.join(directoryPath, filename);

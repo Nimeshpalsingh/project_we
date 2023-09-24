@@ -1,3 +1,81 @@
+# CRUD Application with React.js and Node.js
+
+This is a simple CRUD (Create, Read, Update, Delete) application built using React.js for the frontend and Node.js for the backend. It allows you to manage records and copy the table as an image to the clipboard.
+
+# Features
+Create, Read, Update, and Delete records.
+Sort records based on columns.
+Copy the table as an image to the clipboard.
+Search records by keyword.
+User-friendly interface with validation.
+
+`Store data in the browser's local storage (no database required)`.
+
+
+# Technologies Used 
+Frontend:
+
+React.js
+React Bootstrap
+Axios
+HTML-to-Image
+SweetAlert2
+
+# Backend:
+
+Node.js
+Express.js
+base64-img
+Axios
+
+# Getting Started
+Prerequisites
+Before you begin, ensure you have the following installed:
+
+`Node.js` and npm (Node Package Manager) - Download & Install
+
+# Installation
+
+`Clone the repository:`
+
+github clone `https://github.com/Nimeshpalsingh/project_we`
+
+# Install frontend dependencies:
+
+npm install
+
+# Start the React.js development server:
+
+npm start
+
+The application will open in your default web browser at http://localhost:3000.
+
+# Navigate to the backend directory
+
+cd backend
+
+# Install backend dependencies:
+ 
+npm install
+
+# Start the Node.js server:
+
+cd backend
+`npx nodemon server.js`
+`The server will run on port 5000 by default.`
+
+Use the application to create, read, update, and delete records. You can also copy the table as an image to the clipboard.
+
+# Documentation
+For detailed documentation on the code and how the application works, please refer to the Documentation file.
+
+
+`..................................................................`
+
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
