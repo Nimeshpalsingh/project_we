@@ -206,7 +206,7 @@ function Home() {
                 setTimeout(() => {
                     Swal.fire('Table Copied to clipBoard')
                     setIsLoading(false);
-                }, 2000);
+                }, 1000);
 
             })
             .catch((e) => {
