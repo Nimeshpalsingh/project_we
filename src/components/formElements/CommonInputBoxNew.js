@@ -122,8 +122,8 @@ const CommonInputBoxNew = (props) => {
 		<div className={props.controlClass ?? "form-group"} >
 			{
 				props.label &&
-				<div className="d-flex justify-content-between"  style={{ color: 'white' }}>
-					<label style={{fontSize: '15px' , color: 'white'}}>{props.label}</label>
+				<div className="d-flex justify-content-between"  style={{ color: 'black' }}>
+					<label style={{fontSize: '15px' , color: 'black'}}>{props.label}</label>
 					{
 						error === true &&
 						<div style={{ color: 'red' , fontSize: '12px' }}>

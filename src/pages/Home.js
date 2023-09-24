@@ -7,27 +7,26 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import axios from 'axios';
+import { FaEdit } from "react-icons/fa";
+import { AiFillDelete } from "react-icons/ai";
 
 import * as htmlToImage from 'html-to-image';
 import { copyImageToClipboard } from 'copy-image-clipboard'
 import Variables from '../common/Variables'
+import Loader from '../components/formElements/Loader'
 
 
 function Home() {
     const [show, setShow] = useState(false);
-    const [imageShow, setImageShow] = useState(false);
-
-
     const [formValues, setFormValues] = useState({});
     const [formErrors, setFormErrors] = useState({});
     const [formRefs, setFormRefs] = useState({});
     const [searchQuery, setSearchQuery] = useState(''); // Step 1: Create a state variable for search query
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const handleImageClose = () => setImageShow(false);
 
     const [showUpdateBtn, setShowUpdateBtn] = useState(false)
-
+    const [isLoading, setIsLoading] = useState(false)
     const [showButtonLoader, setShowButtonLoader] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [addData, setAddData] = useState([]);
@@ -35,20 +34,14 @@ function Home() {
 
     const [sortColumn, setSortColumn] = useState(''); // State to track sorting column
     const [sortOrder, setSortOrder] = useState('asc'); // State to track sorting order
-    const targetRef = useRef(null);
-    // Function to load data from localStorage
+
     const loadStoredData = () => {
         const storedData = JSON.parse(localStorage.getItem('data'));
+
         if (storedData) {
             setAddData(storedData);
         }
     };
-
-    useEffect(() => {
-        loadStoredData();
-    }, [show]);
-
-
     const filteredData = addData.filter((item) => {
         return (
             item.Username.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -56,6 +49,14 @@ function Home() {
             item.mobile.toLowerCase().includes(searchQuery.toLowerCase())
         );
     });
+
+    useEffect(() => {
+        loadStoredData();
+
+    }, [show]);
+
+
+
     const handleSort = (column) => {
         if (column === sortColumn) {
             setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -157,10 +158,10 @@ function Home() {
 
 
     const editClickHandlar = (indexToEdit) => {
-        formErrors['Username'] = '';
+
         console.log(indexToEdit);
         setShow(true)
-        const dataToEdit = addData[indexToEdit];
+        const dataToEdit = sortedData[indexToEdit];
         formValues['Username'] = dataToEdit.Username;
         formValues['mobile'] = dataToEdit.mobile;
         formValues['email'] = dataToEdit.email;
@@ -181,6 +182,7 @@ function Home() {
     }
 
     const copyImageBtn = async () => {
+
         var node = document.getElementById('table');
         htmlToImage.toJpeg(node)
             .then(function (dataUrl) {
@@ -188,64 +190,114 @@ function Home() {
                     image: dataUrl,
                 })
                     .then(function (response) {
-                        console.log(response)
+
 
                     })
                     .catch(function (error) {
-                        console.log(error);
+                        Swal.fire('Error', 'Please Start Backend Server', 'error');
                     });
 
             });
-
-
         copyImageToClipboard(
-            'http://localhost:5000/images/image.jpg',
+            Variables.LocalApiBaseUrl + 'images/image.jpg',
         )
             .then(() => {
-                alert('Image Copied to clipBoard')
+                setIsLoading(true);
+                setTimeout(() => {
+                    Swal.fire('Table Copied to clipBoard')
+                    setIsLoading(false);
+                }, 2000);
+
             })
             .catch((e) => {
+                Swal.fire('Error', 'Please Start Backend Server', 'error');
                 console.log('Error: ', e.message)
             })
 
-        setImageShow(true)
+
     };
 
+    if (isLoading) {
+        return (
+            <Loader />
+        )
+    }
 
     return (
-        <div >
-            <Button variant="primary" onClick={onClickAddBtn}>
-                Add
-            </Button>
-            <Button variant="primary" onClick={copyImageBtn}>
-                Copy
-            </Button>
+        <div className="container-fluid" >
+            <div className="row mt-5 mx-4">
+                <div className="col-md-1 mt-2 ">
+                    <button className="btn btn-primary" onClick={onClickAddBtn} > Add</button>
 
-            <input
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)} />
+                </div>
+                <div className="col-md-2 mt-2 ">
+
+                    <button className="btn btn-dark" onClick={copyImageBtn} > Copy To Clipboard</button>
+
+                </div>
+                <div className="col-md-4 mt-2 ">
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        value={searchQuery}
+                        className="form-control"
+                        onChange={(e) => setSearchQuery(e.target.value)} />
+                </div>
+            </div>
+
+
+
+            <div className="row mt-5 m-4" >
+
+                <table className="table" id='table' >
+                    <thead>
+                        <tr>
+                            <th >#</th>
+                            <th onClick={() => handleSort('Username')}>UserName  {sortColumn === 'Username' && sortOrder === 'asc' && '▲'}{sortColumn === 'Username' && sortOrder === 'desc' && '▼'}</th>
+                            <th onClick={() => handleSort('email')}>Email {sortColumn === 'email' && sortOrder === 'asc' && '▲'}{sortColumn === 'email' && sortOrder === 'desc' && '▼'}</th>
+                            <th onClick={() => handleSort('mobile')}>Mobile {sortColumn === 'mobile' && sortOrder === 'asc' && '▲'}{sortColumn === 'mobile' && sortOrder === 'desc' && '▼'}</th>
+                            <th className='text-center'>Delete</th>
+                            <th className='text-center'>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+                        {sortedData.length === 0 ? <tr className='text-center'> No Record </tr> :
+                            sortedData.map((item, index) => (
+                                <tr key={index}>
+                                    <td scope="row">{index + 1}</td>
+                                    <td>{item.Username}</td>
+                                    <td>{item.email}</td>
+                                    <td>{item.mobile}</td>
+                                    <td className='text-center' onClick={() => deleteClickHandlar(index)}><AiFillDelete color='red' /></td>
+                                    <td className='text-center' onClick={() => editClickHandlar(index)}><FaEdit color='green' /></td>
+                                </tr>
+                            ))}
+
+                    </tbody>
+                </table>
+            </div>
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>Add Record</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
                         <CommonInputBoxNew name="Username" label={"Username"} value={formValues} error={formErrors}
                             submitting={isSubmitting} validationType={Enum.ValidationType.Required} placeholder="User name"
-                            onKeyDown={keyDownHandler} inputStyle={{ height: '50px', borderBottom: "1px solid rgb(203 30 30)", fontSize: '15px' }} />
+                            onKeyDown={keyDownHandler} inputStyle={{ height: '50px', border: "1px solid rgb(0 0 0)", fontSize: '15px' }} />
                         <CommonInputBoxNew name="mobile" label={"mobile"} value={formValues} error={formErrors}
                             submitting={isSubmitting} validationType={Enum.ValidationType.Required} placeholder="Enter Mobile"
-                            onKeyDown={keyDownHandler} inputStyle={{ height: '50px', borderBottom: "1px solid rgb(203 30 30)", fontSize: '15px' }} />
+                            onKeyDown={keyDownHandler} inputStyle={{ height: '50px', border: "1px solid rgb(0 0 0)", fontSize: '15px' }} />
                         <CommonInputBoxNew name="email" label={"Email"} value={formValues} error={formErrors}
                             submitting={isSubmitting} validationType={Enum.ValidationType.Required} placeholder="Enter Email"
-                            onKeyDown={keyDownHandler} inputStyle={{ height: '50px', borderBottom: "1px solid rgb(203 30 30)", fontSize: '15px' }} />
+                            onKeyDown={keyDownHandler} inputStyle={{ height: '50px', border: "1px solid rgb(0 0 0)", fontSize: '15px' }} />
 
                         <CommonInputBoxNew name="Password" type={'password'} label={"Password"} value={formValues}
                             placeholder="Password" validationType={Enum.ValidationType.Required} error={formErrors}
-                            submitting={isSubmitting} onKeyDown={keyDownHandler} inputStyle={{ height: '50px', borderBottom: "1px solid rgb(203 30 30)", fontSize: '15px' }} />
+                            submitting={isSubmitting} onKeyDown={keyDownHandler} inputStyle={{ height: '50px', border: "1px solid rgb(0 0 0)", fontSize: '15px' }} />
 
                     </Form>
                 </Modal.Body>
@@ -261,54 +313,9 @@ function Home() {
 
             </Modal>
 
-            <Modal
-                show={imageShow}
-                onHide={handleImageClose}
-                backdrop="static"
-                keyboard={false}
-            >
 
-                <Modal.Body>
-                    <img
-                        src="http://localhost:5000/images/image.jpg"
-                        alt="Description of the image"
-                        style={{ width: '100px', height: '100px' }}
-                    />
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleImageClose}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-
-
-            <table className="table" id='table' ref={targetRef}>
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col" onClick={() => handleSort('Username')}>UserName  {sortColumn === 'Username' && sortOrder === 'asc' && '▲'}{sortColumn === 'Username' && sortOrder === 'desc' && '▼'}</th>
-                        <th scope="col" onClick={() => handleSort('email')}>Email {sortColumn === 'email' && sortOrder === 'asc' && '▲'}{sortColumn === 'email' && sortOrder === 'desc' && '▼'}</th>
-                        <th scope="col" onClick={() => handleSort('mobile')}>Mobile {sortColumn === 'mobile' && sortOrder === 'asc' && '▲'}{sortColumn === 'mobile' && sortOrder === 'desc' && '▼'}</th>
-                        <th>Delete</th>
-                        <th>Edit</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {sortedData.map((item, index) => (
-                        <tr>
-                            <th scope="row">{index + 1}</th>
-                            <td>{item.Username}</td>
-                            <td>{item.email}</td>
-                            <td>{item.mobile}</td>
-                            <td onClick={() => deleteClickHandlar(index)}>Delete</td>
-                            <td onClick={() => editClickHandlar(index)}>Edit</td>
-                        </tr>
-                    ))}
-
-                </tbody>
-            </table>
         </div >
+
     )
 }
 
