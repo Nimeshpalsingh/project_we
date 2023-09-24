@@ -289,14 +289,14 @@ function Home() {
                             submitting={isSubmitting} validationType={Enum.ValidationType.Required} placeholder="User name"
                             onKeyDown={keyDownHandler} inputStyle={{ height: '50px', border: "1px solid rgb(0 0 0)", fontSize: '15px' }} />
                         <CommonInputBoxNew name="mobile" label={"mobile"} value={formValues} error={formErrors}
-                            submitting={isSubmitting} validationType={Enum.ValidationType.Required} placeholder="Enter Mobile"
+                            submitting={isSubmitting} validationType={Enum.ValidationType.MobileRequired} placeholder="Enter Mobile"
                             onKeyDown={keyDownHandler} inputStyle={{ height: '50px', border: "1px solid rgb(0 0 0)", fontSize: '15px' }} />
                         <CommonInputBoxNew name="email" label={"Email"} value={formValues} error={formErrors}
-                            submitting={isSubmitting} validationType={Enum.ValidationType.Required} placeholder="Enter Email"
+                            submitting={isSubmitting} validationType={Enum.ValidationType.EmailRequired} placeholder="Enter Email"
                             onKeyDown={keyDownHandler} inputStyle={{ height: '50px', border: "1px solid rgb(0 0 0)", fontSize: '15px' }} />
 
                         <CommonInputBoxNew name="Password" type={'password'} label={"Password"} value={formValues}
-                            placeholder="Password" validationType={Enum.ValidationType.Required} error={formErrors}
+                            placeholder="Password" validationType={Enum.ValidationType.Password} error={formErrors}
                             submitting={isSubmitting} onKeyDown={keyDownHandler} inputStyle={{ height: '50px', border: "1px solid rgb(0 0 0)", fontSize: '15px' }} />
 
                     </Form>
